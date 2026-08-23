@@ -1,4 +1,28 @@
-<div align="center">
-<h1>Flood Prediction Model</h1>
-<h3>Predicting Floods in the Kelani River Basin With a Model Trained on Previous Rain/Flood Records<h3>
-</div>
+# Flood Prediction System
+
+A machine learning project focused on predicting flood risk in Sri Lanka using historical rainfall, water-level, and river monitoring data.
+
+## Status
+
+**Work in Progress**
+
+The project is currently focused on collecting, extracting, and preparing historical hydrological data from PDF reports. Model development and evaluation will be implemented as the dataset is completed.
+
+## Planned Features
+
+- Historical rainfall and water-level data extraction
+- Data cleaning and preprocessing
+- Machine learning-based flood prediction
+- Model evaluation and performance analysis
+- Flood risk visualization
+
+## Technologies
+
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Machine Learning
+- PDF Data Extraction
+
+Further documentation and implementation details will be added as the project progresses.
