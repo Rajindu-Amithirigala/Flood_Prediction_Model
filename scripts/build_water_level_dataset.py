@@ -445,9 +445,6 @@ def main(
         exist_ok=True
     )
 
-    # -----------------------------------------------------
-    # Load the water-level PDF inventory
-    # -----------------------------------------------------
 
     water_level_df = pd.read_csv(
         water_level_csv
@@ -465,10 +462,6 @@ def main(
         "PDFs in water-level CSV"
     )
 
-    # -----------------------------------------------------
-    # Find matching PDFs in the raw directory
-    # -----------------------------------------------------
-
     pdf_files = [
         f
         for f in os.listdir(input_dir)
@@ -482,10 +475,6 @@ def main(
         f"Found {len(pdf_files)} matching PDFs "
         f"in {input_dir}"
     )
-
-    # -----------------------------------------------------
-    # Check for inventory files that are missing
-    # -----------------------------------------------------
 
     available_files = set(
         os.listdir(input_dir)
@@ -503,10 +492,6 @@ def main(
             f"{len(missing_files)} files "
             "listed in CSV were not found."
         )
-
-    # -----------------------------------------------------
-    # Parse PDFs
-    # -----------------------------------------------------
 
     all_rows = []
     log_entries = []
@@ -580,9 +565,6 @@ def main(
                 f"({fail_count} failures so far)"
             )
 
-    # -----------------------------------------------------
-    # Write observations
-    # -----------------------------------------------------
 
     with open(
         output_csv,
@@ -599,9 +581,6 @@ def main(
         writer.writeheader()
         writer.writerows(all_rows)
 
-    # -----------------------------------------------------
-    # Write parse log
-    # -----------------------------------------------------
 
     with open(
         log_csv,
