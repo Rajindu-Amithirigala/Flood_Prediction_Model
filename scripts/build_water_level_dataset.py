@@ -108,9 +108,7 @@ def normalize_header(value):
 def build_column_map(header_rows):
 
     if not header_rows:
-        raise ValueError(
-            "No header rows found"
-        )
+        raise ValueError("No header rows found")
 
     max_columns = max(
         len(row)
@@ -140,69 +138,108 @@ def build_column_map(header_rows):
         )
 
     column_map = {}
+    water_level_columns = []
 
     for i, header in enumerate(
         combined_headers
     ):
 
-        if "river basin" in header:
+        if (
+            "river basin" in header
+            or header.strip() == "river"
+        ):
             column_map["river_basin"] = i
 
-        elif (
+        if (
             "tributory" in header
             or "tributary" in header
         ):
             column_map["tributary"] = i
 
-        elif "station" in header:
+        if (
+            "gauging station" in header
+            or header.strip() == "station"
+        ):
             column_map["station"] = i
 
-        elif header.strip() == "unit":
+        if header.strip() == "unit":
             column_map["unit"] = i
 
-        elif "alert level" in header:
+        if "alert level" in header:
             column_map["alert_level"] = i
 
-        elif (
+        if (
             "minor" in header
             and "flood" in header
         ):
             column_map["minor_flood_level"] = i
 
-        elif (
+        if (
             "major" in header
             and "flood" in header
         ):
             column_map["major_flood_level"] = i
 
-        elif (
-            "previous" in header
-            and "level" in header
+        # Collect both water-level columns.
+        if (
+            "water level" in header
+            and (
+                "before" in header
+                or " at " in f" {header} "
+            )
         ):
-            column_map["water_level_prev"] = i
+            water_level_columns.append(i)
 
-        elif (
-            "current" in header
-            and "level" in header
-        ):
-            column_map["water_level_curr"] = i
-
-        elif "remarks" in header:
+        if "remarks" in header:
             column_map["remarks"] = i
 
-        elif (
+        if (
             "rising" in header
             or "falling" in header
         ):
             column_map["rising_falling"] = i
 
-        elif (
+        if (
             "rf" in header
             or "rainfall" in header
         ):
             column_map["rainfall"] = i
 
+    if len(water_level_columns) >= 2:
+
+        column_map["water_level_prev"] = (
+            water_level_columns[0]
+        )
+
+        column_map["water_level_curr"] = (
+            water_level_columns[1]
+        )
+
     return column_map
+
+def is_water_level_table(table):
+
+    if not table:
+        return False
+
+    header_text = " ".join(
+        clean(cell).lower()
+        for row in table[:2]
+        for cell in row
+        if cell
+    )
+
+    required_terms = [
+        "gauging station",
+        "alert level",
+        "minor flood",
+        "major flood",
+    ]
+
+    return all(
+        term in header_text
+        for term in required_terms
+    )
 
 
 def get_cell(row, column_map, field):
@@ -265,12 +302,15 @@ def parse_file(fpath):
                 continue
 
             for table in tables:
-
+            
                 if not table or len(table) < 3:
                     continue
-
+            
+                if not is_water_level_table(table):
+                    continue
+            
                 header_rows = table[:2]
-
+                
                 try:
                     column_map = (
                         build_column_map(
@@ -427,14 +467,28 @@ def parse_file(fpath):
 
     return rows_out, warnings
 
-
+def test(input_dir):
+    #test start
+    pdfs = []
+    
+    val = 2020
+    while val<2026:
+        for pdf in os.listdir(input_dir):
+            if str(val) in pdf:
+                pdfs.append(pdf)
+                val+=1
+                break
+    return pdfs
+    #test end
+    
 def main(
     input_dir,
     water_level_csv,
     output_csv,
     log_csv
 ):
-
+    test_pdfs = test(input_dir)
+    
     os.makedirs(
         os.path.dirname(output_csv),
         exist_ok=True
@@ -467,7 +521,7 @@ def main(
         for f in os.listdir(input_dir)
         if (
             f.lower().endswith(".pdf")
-            and f in water_level_files
+            and f in test_pdfs
         )
     ]
 
