@@ -349,20 +349,33 @@ def parse_file(fpath):
 
                     continue
 
+                current_basin = ""
+                
                 for row in table[2:]:
-
+                
                     if not row:
                         continue
-
+                
+                    raw_basin = get_cell(
+                        row,
+                        column_map,
+                        "river_basin"
+                    )
+                
+                    if raw_basin:
+                        current_basin = raw_basin
+                
+                    river_basin = current_basin
+                
                     raw_station = get_cell(
                         row,
                         column_map,
                         "station"
                     )
-
+                
                     if not raw_station:
                         continue
-
+                
                     station = canonical_station(
                         raw_station
                     )
@@ -378,11 +391,7 @@ def parse_file(fpath):
 
                         "time": time,
 
-                        "river_basin": get_cell(
-                            row,
-                            column_map,
-                            "river_basin"
-                        ),
+                        "river_basin": river_basin,
 
                         "tributary": get_cell(
                             row,
