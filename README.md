@@ -25,4 +25,3 @@ The project is currently focused on collecting, extracting, and preparing histor
 - Machine Learning
 - PDF Data Extraction
 
-Further documentation and implementation details will be added as the project progresses.
