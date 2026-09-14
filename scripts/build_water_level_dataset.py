@@ -496,7 +496,7 @@ def main(
     output_csv,
     log_csv
 ):
-    test_pdfs = test(input_dir)
+    #test_pdfs = test(input_dir) #comment out to run a test on a small batch
     
     os.makedirs(
         os.path.dirname(output_csv),
@@ -530,7 +530,7 @@ def main(
         for f in os.listdir(input_dir)
         if (
             f.lower().endswith(".pdf")
-            and f in test_pdfs
+            and f in water_level_files #change to "test_pdfs" for the small batch test
         )
     ]
 
