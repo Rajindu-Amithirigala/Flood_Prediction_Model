@@ -79,6 +79,13 @@ def parse_timestamp(date_str, time_str):
 
     return None
 
+def is_valid_pdf(path):
+    try:
+        with open(path, "rb") as f:
+            return f.read(5) == b"%PDF-"
+    except OSError:
+        return False
+
 
 def clean(value):
     if value is None:
@@ -254,11 +261,17 @@ def get_cell(row, column_map, field):
 
     return clean(row[index])
 
+def get_file_signature(path): #for files with different signatures
+    with open(path, "rb") as f:
+        return f.read(8)
 
 def parse_file(fpath):
 
     rows_out = []
     warnings = []
+
+    if not is_valid_pdf(fpath):
+        return [], [f"invalid pdf : {get_file_signature(fpath)}"]
 
     fname = os.path.basename(fpath)
 
@@ -575,9 +588,7 @@ def main(
 
         try:
 
-            rows, warnings = parse_file(
-                fpath
-            )
+            rows, warnings = parse_file(fpath)
 
             all_rows.extend(rows)
 
